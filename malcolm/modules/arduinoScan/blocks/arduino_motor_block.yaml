@@ -1,0 +1,18 @@
+- builtin.parameters.string:
+    name: mri_prefix
+    description: prefix for Malcolm resource ids of the Blocks
+
+- scanning.controllers.RunnableController:
+    mri: $(mri_prefix)
+    config_dir: /tmp
+    description: Hardware triggered scan
+    initial_design:
+
+#- scanning.parts.DetectorChildPart:
+#    name: DET
+#    mri: TS-ML-DET-01
+#    initial_visibility: True
+
+
+
+

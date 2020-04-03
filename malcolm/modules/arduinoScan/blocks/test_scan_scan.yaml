@@ -1,0 +1,25 @@
+- builtin.parameters.string:
+    name: mri_prefix
+    description: prefix for Malcolm resource ids of the Blocks
+
+
+- builtin.parts.LabelPart:
+
+- scanning.parts.SimultaneousAxesPart:
+
+- scanning.parts.DatasetTablePart:
+    name: DSET
+
+- arduinoScan.parts.ArduinoMotorChildPart:
+    name: ARDUINO
+    mri: $(mri_prefix):STEP
+    axis_1: r
+    axis_2: x
+    port: /dev/ttyACM0
+    initial_visibility: True
+
+- scanning.controllers.RunnableController:
+    mri: $(mri_prefix):SCAN
+    config_dir: /tmp
+    description: Hardware triggered scan
+    initial_design: default
