@@ -4,6 +4,7 @@ from __future__ import division
 import re
 from enum import Enum
 import serial
+from math import floor
 import numpy as np
 from annotypes import add_call_types, Anno, TYPE_CHECKING
 from scanpointgenerator import CompoundGenerator
@@ -126,23 +127,23 @@ class ArduinoMotorChildPart(builtin.parts.ChildPart):
             raise Exception("Expected 2 axes, got %d" % len(scan_axes))
         self.generator = generator
         scan_params["fast_axis"] = scan_axes[1].axes[0]
+        scan_params["alternate"] = scan_axes[1].alternate
         scan_params["slow_axis"] = scan_axes[0].axes[0]
+        scan_params["fast_start"] = int(scan_axes[1].start[0])
+        scan_params["fast_end"] = int(scan_axes[1].stop[0])
         scan_params["slow_start"] = int(scan_axes[0].start[0])
         scan_params["slow_end"] = int(scan_axes[0].stop[0])
-        scan_params["time_step"] = int(generator.duration*1000.0)  # convert s to ms
-        
-        scan_params["fast_step_cnt"] = int(scan_axes[1].size)
-        scan_params["fast_speed"] =  1 #\
-            #(scan_axes[1].stop[0] - scan_axes[1].start[0]) /\
-            # (scan_axes[1].size * generator.duration*1000.0)
+        scan_params["time_step"] = int(generator.duration*1000.0)  # convert s to ms        
 
         scan_params["slow_step"] = int(
             (scan_axes[0].stop[0] - scan_axes[0].start[0]) / scan_axes[0].size)
+        scan_params["fast_step"] = int(
+            (scan_axes[1].stop[0] - scan_axes[1].start[0]) / scan_axes[1].size)
         
         self.port.reset_input_buffer()
-        self.port.write(("scan({fast_axis:s}:{fast_speed:f},{fast_step_cnt:d};" + \
+        self.port.write(("scan({fast_axis:s}:{fast_start:d},{fast_step:d},{fast_end:d};" + \
                          "{slow_axis:s}:{slow_start:d},{slow_step:d}," + \
-                         "{slow_end:d};{time_step:d})\n").format(**scan_params))
+                         "{slow_end:d};{time_step:d};{alternate:d})\n").format(**scan_params))
 
         resp = self.port.readline().rstrip()
         self.parse_positions(resp)                    

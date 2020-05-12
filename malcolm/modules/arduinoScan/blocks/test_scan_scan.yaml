@@ -22,4 +22,4 @@
     mri: $(mri_prefix):SCAN
     config_dir: /tmp
     description: Hardware triggered scan
-    initial_design: default
+    # initial_design: default
